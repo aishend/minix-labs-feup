@@ -67,7 +67,7 @@ We declare that:
 4. We have not used AI tools to generate complete solutions that we present as entirely our own unaided work, and we have avoided plagiarism, whether from AI outputs or other sources.  
 5. If asked, we will provide details of which tools we used, for which files or parts of the project, and how we verified and adapted their outputs.
 
-Signed: `<student name>`, `<student name>`, `<student name>`, `<student name>`  
+Signed: `<student name>`, `<student name>`, `Leandro Moreira`, `<student name>`  
 Date: `<date>`
 
 ## Authors and acknowledgment
@@ -77,5 +77,5 @@ Group members:
 
 <first name> <family name> (<email address>)
 <first name> <family name> (<email address>)
-<first name> <family name> (<email address>)
+Leandro Moreira (up202405528@up.pt)
 Tomás Silva (up202403435@up.pt)
