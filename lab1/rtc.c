@@ -1,5 +1,8 @@
 #include "rtc.h"
 
+#include <minix/syslib.h>
+#include <minix/sysutil.h>
+
 #define TODO return -1
 
 #define RTC_ADDR_REG 0x70
@@ -16,9 +19,6 @@ static int bcd_to_bin(uint8_t bcd) {
   return ((bcd >> 4) * 10) + (bcd & 0x0F); 
 ; }
 
-
-#include <minix/syslib.h>
-#include <minix/sysutil.h>
 
 int rtc_read_date(rtc_date *date) { 
   sys_outb(RTC_ADDR_REG, RTC_REG_A);
