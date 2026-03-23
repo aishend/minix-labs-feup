@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern uint32_t global_counter; // importar
+uint32_t timer_get_count(); 
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -62,7 +62,7 @@ int(timer_test_int)(uint8_t time) {
   uint32_t irq_set = BIT(bit_no);
 
   // um segundo, 60 interrupcoes 60 hz
-  while(global_counter < (time * 60)) { /* You may want to use a different condition */
+  while(timer_get_count() < (time * 60)) { /* You may want to use a different condition */
       /* Get a request message. */
       if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
           printf("driver_receive failed with: %d", r);
@@ -73,7 +73,7 @@ int(timer_test_int)(uint8_t time) {
               case HARDWARE: /* hardware interrupt notification */				
                   if (msg.m_notify.interrupts & irq_set) { /* subscribed interrupt */
                       timer_int_handler();   /* process it */
-                      if (global_counter % 60 == 0) {
+                      if (timer_get_count() % 60 == 0) {
                         timer_print_elapsed_time();
                       }
                   }

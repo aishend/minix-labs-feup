@@ -7,6 +7,11 @@
 static int hook_id = 0;
 uint32_t global_counter = 0;
 
+
+uint32_t timer_get_count() {
+  return global_counter; 
+}
+
 int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   uint8_t st;
