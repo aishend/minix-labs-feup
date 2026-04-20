@@ -47,6 +47,7 @@ int(kbd_test_scan)() {
   uint8_t size = 0;
 
   while (1) {
+    // 
     if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) continue;
     if (is_ipc_notify(ipc_status)) {
       if (_ENDPOINT_P(msg.m_source) == HARDWARE) {
@@ -68,10 +69,13 @@ int(kbd_test_scan)() {
   return 1;
 }
 
+// sem usar interrupcoes
 int (kbd_test_poll)() {
   uint8_t bytes[2], data;
   uint8_t size = 0;
+  // 
   while (1) {
+    // ler em loop o valor do kbc e verificar se tem scancode para ler
     if (kbc_read_value(&data) == 0) {
       bytes[size++] = data;
       if (data == 0xE0) continue;
@@ -80,6 +84,7 @@ int (kbd_test_poll)() {
       size = 0;
     }
   }
+  // reativar interrupts pq o poll desativa-os
   return kbc_enable_interrupts();
 }
 
@@ -89,31 +94,41 @@ int (kbd_test_timed_scan)(uint8_t n) {
   uint8_t kbd_bit, timer_bit;
   uint8_t bytes[2], size = 0;
 
+  // subscrever os dois ao mesmo tempo
   kbd_subscribe_int(&kbd_bit);
   timer_subscribe_int(&timer_bit);
   uint32_t kbd_irq = BIT(kbd_bit);
   uint32_t timer_irq = BIT(timer_bit);
 
   while (1) {
+    // esperamos por mensagens de interrupcao do timer ou do teclado
     if ((r = driver_receive(ANY, &msg, &ipc_status)) != 0) continue;
     if (is_ipc_notify(ipc_status)) {
       if (_ENDPOINT_P(msg.m_source) == HARDWARE) {
+        // interrupcao do timer
         if (msg.m_notify.interrupts & timer_irq) {
-          timer_int_handler(); 
+          timer_int_handler(); //incrementa o global counter
           if (global_counter >= (uint32_t)(n * 60)) {
             kbd_unsubscribe_int();
             timer_unsubscribe_int();
             return 0;
           }
         }
+
+        // interrupcao do teclado
         if (msg.m_notify.interrupts & kbd_irq) {
           kbc_ih();
           uint8_t b = get_scancode_byte();
+          // dar reset a variavel que conta o tempo pq houve atividade do teclado
           global_counter = 0; 
+          // guardar o byte lido do kbc
           bytes[size++] = b;
+
+          // se isto acontecer significa uqe temos de esperar mais um byte para ler o scancode completo
           if (b == 0xE0) continue;
           kbd_print_scancode(!(b & BIT(7)), size, bytes);
           if (b == ESC_BREAK_CODE) {
+            // ja nao precisamos de tratar mais das interrupcoews logo damos unsubscribe do timer e do kbc
             kbd_unsubscribe_int();
             timer_unsubscribe_int();
             return 0;

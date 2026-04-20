@@ -17,14 +17,17 @@ int (kbd_unsubscribe_int)() {
   return sys_irqrmpolicy(&kbd_hook_id);
 }
 
+// interrupt handler do teclado
 void (kbc_ih)() {
   uint8_t status;
+  // ler o status do kbc para perceber ver se temos scancode para ler e se nao ha erros
   if (util_sys_inb(ST_REG, &status) != 0) return;
 
   if (status & KBC_OBF) {
     uint8_t data;
     if (util_sys_inb(OUT_BUFFER, &data) != 0) return;
 
+    // erros de parity e timeout
     if (!(status & (KBC_PARITY | KBC_TIMEOUT))) {
       scancode_byte = data;
     }

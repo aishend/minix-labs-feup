@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "kbc.h"
 
+// 
 int (util_sys_inb)(int port, uint8_t *value) {
     uint32_t temp_val;
     if (sys_inb(port, &temp_val) != 0) return 1;
@@ -9,6 +10,7 @@ int (util_sys_inb)(int port, uint8_t *value) {
     return 0;
 }
 
+// 
 int (kbc_read_value)(uint8_t *value) {
     uint8_t status;
     
@@ -21,6 +23,7 @@ int (kbc_read_value)(uint8_t *value) {
 }
 
 
+// reativamos os interruptos pq desativamos no poll
 int (kbc_enable_interrupts)() {
     uint8_t cmd_byte;
 
